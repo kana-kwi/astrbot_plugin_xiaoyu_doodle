@@ -29,6 +29,8 @@
 
 ## 安装
 
+需要 **AstrBot >= 4.5.0**（`metadata.yaml` 里已声明，低版本会提示不兼容）。
+
 ### 方式 A：从 GitHub 装（推荐）
 
 ```bash

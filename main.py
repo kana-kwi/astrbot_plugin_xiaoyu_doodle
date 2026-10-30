@@ -133,7 +133,7 @@ ops 里每条指令的格式：
     "xiaoyu_doodle",
     "kana-kwi",
     "让鲸小鱼亲手画涂鸦：她自己给出每一笔的坐标，程序照她的笔迹画出来",
-    "2.0.1",
+    "2.1.0",
     "https://github.com/kana-kwi/astrbot_plugin_xiaoyu_doodle",
 )
 class XiaoYuDoodle(Star):
