@@ -1,0 +1,107 @@
+{
+  "provider_id": {
+    "type": "string",
+    "description": "用来「想画面」的模型 Provider ID，留空则使用 AstrBot 当前默认对话模型。建议用较聪明的模型，画得更像样",
+    "default": ""
+  },
+  "canvas_size": {
+    "type": "int",
+    "description": "画布边长（像素），建议 512~1024",
+    "default": 768
+  },
+  "jitter": {
+    "type": "float",
+    "description": "线条抖动幅度，越大越像手抖画出来的。0 = 完全笔直，1.5 比较自然",
+    "default": 1.5
+  },
+  "max_ops": {
+    "type": "int",
+    "description": "单张图最多接受多少条绘制指令，防止模型话太多画崩",
+    "default": 80
+  },
+  "signature": {
+    "type": "string",
+    "description": "画完在右下角签的名字",
+    "default": "鲸小鱼"
+  },
+  "show_date": {
+    "type": "bool",
+    "description": "签名后面是否带当天日期",
+    "default": true
+  },
+  "font_path": {
+    "type": "string",
+    "description": "中文字体路径。留空会自动找系统字体；找不到会用英文签名。VPS 装字体：apt install -y fonts-wqy-zenhei",
+    "default": ""
+  },
+  "temp_dir": {
+    "type": "string",
+    "description": "临时文件目录（需 AstrBot 可写）",
+    "default": "data/plugins/astrbot_plugin_xiaoyu_doodle/tmp"
+  },
+  "enabled_groups": {
+    "type": "string",
+    "description": "允许使用的群号，逗号分隔；留空=全部群",
+    "default": ""
+  },
+  "allow_private": {
+    "type": "bool",
+    "description": "是否允许私聊使用",
+    "default": true
+  },
+  "gallery_dir": {
+    "type": "string",
+    "description": "画册存放目录。默认放在插件数据目录，重装插件不会丢",
+    "default": "data/plugin_data/astrbot_plugin_xiaoyu_doodle"
+  },
+  "gallery_limit": {
+    "type": "int",
+    "description": "画册最多记住多少张（超出后丢掉最早的记录，图片文件不删）",
+    "default": 300
+  },
+  "mood_hint": {
+    "type": "text",
+    "description": "给她一条「最近状态」的暗示，让她自己判断想不想画、要不要认真画。例如：最近有点累，画得少一点；或者：最近心情不错，愿意多画。留空则完全由她根据对话自己判断",
+    "default": ""
+  },
+  "gateway_enabled": {
+    "type": "bool",
+    "description": "开启本地生图网关：把涂鸦伪装成魔搭风格的生图 API，供「我会画给你看」调用，从而让整个陪伴体系都用她手绘的图",
+    "default": false
+  },
+  "gateway_host": {
+    "type": "string",
+    "description": "网关监听地址。同在同一个容器内填 127.0.0.1 即可",
+    "default": "127.0.0.1"
+  },
+  "gateway_port": {
+    "type": "int",
+    "description": "网关端口，注意别和别的服务冲突",
+    "default": 8765
+  },
+  "gateway_base_url": {
+    "type": "string",
+    "description": "返回给调用方的图片地址前缀。留空自动用 http://监听地址:端口；如果调用方在容器外，填宿主机可访问的地址，如 http://172.17.0.1:8765",
+    "default": ""
+  },
+  "web_enabled": {
+    "type": "bool",
+    "description": "开启画册网页：在浏览器里查看、编辑说明、下载、导出她画过的所有画",
+    "default": false
+  },
+  "web_host": {
+    "type": "string",
+    "description": "画册网页监听地址。0.0.0.0 = 允许外部访问（记得设强密码）；127.0.0.1 = 只能本机/SSH隧道访问",
+    "default": "0.0.0.0"
+  },
+  "web_port": {
+    "type": "int",
+    "description": "画册网页端口，别和网关端口冲突",
+    "default": 8766
+  },
+  "web_password": {
+    "type": "string",
+    "description": "画册网页访问密码。留空则不会启动网页（防止公网裸奔），建议设一个复杂点的",
+    "default": ""
+  }
+}

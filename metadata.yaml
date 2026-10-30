@@ -1,0 +1,5 @@
+name: astrbot_plugin_xiaoyu_doodle
+author: kana-kwi
+version: 2.0.1
+desc: 让鲸小鱼亲手画涂鸦：她自己给坐标、自己决定想不想画；画过的进画册，可网页查看/编辑/导出
+repo: "https://github.com/kana-kwi/astrbot_plugin_xiaoyu_doodle"

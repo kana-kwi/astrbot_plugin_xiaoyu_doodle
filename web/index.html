@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>鲸小鱼的画册</title>
+<style>
+  :root{
+    --bg:#faf8f3; --card:#fff; --ink:#2b2b2b; --sub:#8a8a8a;
+    --line:#e8e3d8; --accent:#8ecae6; --accent2:#219ebc; --danger:#e76f51;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+  header{position:sticky;top:0;z-index:9;background:rgba(250,248,243,.94);
+         backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+         padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0;font-weight:600;letter-spacing:.5px;white-space:nowrap}
+  .muted{color:var(--sub);font-size:13px;white-space:nowrap}
+  .grow{flex:1}
+  button{font:inherit;border:1px solid var(--line);background:#fff;color:var(--ink);
+         padding:7px 13px;border-radius:9px;cursor:pointer;transition:.15s}
+  button:hover{border-color:var(--accent);background:#f4fbfe}
+  button:disabled{opacity:.5;cursor:default}
+  button.danger{color:var(--danger);border-color:#f0d5cd}
+  button.danger:hover{background:#fdf1ee}
+  input[type=search]{font:inherit;border:1px solid var(--line);background:#fff;color:var(--ink);
+        padding:7px 12px;border-radius:9px;min-width:180px;outline:none}
+  input[type=search]:focus{border-color:var(--accent)}
+  main{padding:18px;max-width:1240px;margin:0 auto}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+        display:flex;flex-direction:column}
+  .thumb{background:#f2efe8;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+         cursor:zoom-in}
+  .thumb img{width:100%;height:100%;object-fit:contain;display:block}
+  .meta{padding:10px 12px;flex:1;display:flex;flex-direction:column;gap:4px}
+  .subject{font-size:14px;font-weight:500;word-break:break-all}
+  .time{font-size:12px;color:var(--sub)}
+  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;
+       background:#fdf3e3;color:#a9762a;margin-left:6px}
+  .actions{display:flex;gap:8px;padding:0 12px 12px}
+  .actions button{flex:1;padding:6px 0;font-size:13px}
+  .empty{text-align:center;color:var(--sub);padding:60px 0}
+  .more{text-align:center;padding:24px 0 40px}
+  .more button{padding:10px 28px;border-radius:11px}
+  .lightbox{position:fixed;inset:0;background:rgba(20,20,20,.93);display:none;
+            align-items:center;justify-content:center;z-index:99}
+  .lightbox.show{display:flex}
+  .lightbox img{max-width:calc(100% - 140px);max-height:calc(100% - 100px);
+                object-fit:contain;border-radius:8px;background:#fff}
+  .lb-btn{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;
+          border-radius:50%;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
+          color:#fff;font-size:22px;line-height:1;cursor:pointer;display:flex;
+          align-items:center;justify-content:center}
+  .lb-btn:hover{background:rgba(255,255,255,.26)}
+  #lbPrev{left:22px} #lbNext{right:22px}
+  .lb-info{position:absolute;bottom:22px;left:0;right:0;text-align:center;
+           color:#eee;font-size:13px;padding:0 20px}
+  #login{max-width:340px;margin:18vh auto;background:#fff;padding:26px;border-radius:16px;
+         border:1px solid var(--line);text-align:center}
+  #login input[type=password]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;
+               font:inherit;margin:14px 0}
+  #login p{margin:0 0 6px;color:var(--sub);font-size:13px}
+  .err{color:var(--danger);font-size:13px;min-height:18px}
+  @media(max-width:520px){
+    .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+    input[type=search]{min-width:120px;flex:1}
+    .lightbox img{max-width:calc(100% - 100px)}
+  }
+</style>
+</head>
+<body>
+
+<div id="login" hidden>
+  <h2 style="margin:0 0 6px;font-size:16px">鲸小鱼的画册</h2>
+  <p>输入访问密码</p>
+  <input id="pwd" type="password" placeholder="密码" autocomplete="current-password">
+  <button id="enter" style="width:100%">进去看看</button>
+  <div class="err" id="loginErr"></div>
+</div>
+
+<div id="app" hidden>
+  <header>
+    <h1>鲸小鱼的画册</h1>
+    <span class="muted" id="count"></span>
+    <span class="grow"></span>
+    <input type="search" id="q" placeholder="搜说明…" autocomplete="off">
+    <button id="refresh">刷新</button>
+    <button id="export">导出全部</button>
+    <button id="logout">退出</button>
+  </header>
+  <main>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" hidden>还没有画</div>
+    <div class="more" id="moreWrap" hidden><button id="more">加载更多</button></div>
+  </main>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-btn" id="lbPrev" title="上一张">‹</button>
+  <img id="lightboxImg" alt="">
+  <button class="lb-btn" id="lbNext" title="下一张">›</button>
+  <div class="lb-info" id="lbInfo"></div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const PAGE = 24;
+
+let PWD = localStorage.getItem('doodle_pwd') || '';
+let ALL = [];      // 全部条目（新的在前）
+let VIEW = [];     // 过滤后的
+let shown = 0;     // 已渲染数量
+let lbIndex = -1;  // 灯箱当前索引（对应 VIEW）
+
+/* ---------- 基础 ---------- */
+function showLogin(msg){
+  $('#app').hidden = true;
+  $('#login').hidden = false;
+  $('#loginErr').textContent = msg || '';
+  $('#pwd').focus();
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function api(path, opts){
+  opts = opts || {};
+  const headers = Object.assign({'X-Pwd': PWD}, opts.headers || {});
+  const r = await fetch(path, Object.assign({}, opts, {headers}));
+  if(r.status === 401){ showLogin('密码不对'); throw new Error('401'); }
+  return r;
+}
+
+function imgUrl(name, opt){
+  opt = opt || {};
+  let u = '/img/' + encodeURIComponent(name) + '?pwd=' + encodeURIComponent(PWD);
+  if(opt.thumb) u += '&thumb=1';
+  if(opt.dl) u += '&dl=1';
+  return u;
+}
+
+/* ---------- 渲染 ---------- */
+function filtered(){
+  const k = ($('#q').value || '').trim().toLowerCase();
+  if(!k) return ALL;
+  return ALL.filter(it =>
+    String(it.subject || '').toLowerCase().includes(k) ||
+    String(it.time || '').includes(k)
+  );
+}
+
+function reset(){
+  VIEW = filtered();
+  shown = 0;
+  $('#grid').innerHTML = '';
+  $('#count').textContent = VIEW.length ? ('共 ' + VIEW.length + ' 张') : '';
+  $('#empty').hidden = VIEW.length > 0;
+  $('#empty').textContent = ALL.length ? '没有匹配的' : '她还没画过什么呢';
+  renderMore();
+}
+
+function renderMore(){
+  const end = Math.min(shown + PAGE, VIEW.length);
+  const grid = $('#grid');
+  for(let i = shown; i < end; i++){
+    const it = VIEW[i];
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML =
+      '<div class="thumb"><img loading="lazy" src="' + imgUrl(it.file, {thumb:1}) + '" alt=""></div>' +
+      '<div class="meta">' +
+        '<div class="subject">' + esc(it.subject || '(没有说明)') +
+          (it.sloppy ? '<span class="tag">敷衍</span>' : '') + '</div>' +
+        '<div class="time">' + esc(it.time || '') + ' · ' + (it.w || '?') + 'x' + (it.h || '?') + '</div>' +
+      '</div>' +
+      '<div class="actions">' +
+        '<button data-act="edit">改说明</button>' +
+        '<button data-act="dl">下载</button>' +
+        '<button data-act="del" class="danger">删除</button>' +
+      '</div>';
+    card.querySelector('.thumb').onclick = () => openBox(i);
+    card.querySelectorAll('.actions button').forEach(btn => {
+      btn.onclick = async (e) => {
+        e.stopPropagation();
+        const act = btn.dataset.act;
+        if(act === 'edit') await editItem(it);
+        if(act === 'dl') window.open(imgUrl(it.file, {dl:1}), '_blank');
+        if(act === 'del') await delItem(it);
+      };
+    });
+    grid.appendChild(card);
+  }
+  shown = end;
+  $('#moreWrap').hidden = shown >= VIEW.length;
+  $('#more').textContent = '加载更多（还有 ' + Math.max(0, VIEW.length - shown) + ' 张）';
+}
+
+async function load(){
+  try{
+    const r = await api('/api/list');
+    const d = await r.json();
+    ALL = d.items || [];
+    reset();
+  }catch(e){}
+}
+
+/* ---------- 操作 ---------- */
+async function editItem(it){
+  const s = prompt('改成什么说明？', it.subject || '');
+  if(s === null) return;
+  try{
+    const r = await api('/api/update', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({file: it.file, subject: s})
+    });
+    const d = await r.json();
+    if(d.ok){ it.subject = s; reset(); } else alert(d.error || '修改失败');
+  }catch(e){}
+}
+
+async function delItem(it){
+  if(!confirm('删掉「' + (it.subject || it.file) + '」？图片文件也会一起删。')) return;
+  try{
+    const r = await api('/api/delete', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({file: it.file})
+    });
+    const d = await r.json();
+    if(d.ok) load(); else alert(d.error || '删除失败');
+  }catch(e){}
+}
+
+/* ---------- 灯箱 ---------- */
+function openBox(i){
+  if(i < 0 || i >= VIEW.length) return;
+  lbIndex = i;
+  const it = VIEW[i];
+  $('#lightboxImg').src = imgUrl(it.file);
+  $('#lbInfo').textContent = (it.subject || '') + '　' + (it.time || '') +
+    '　(' + (i + 1) + '/' + VIEW.length + ')';
+  $('#lightbox').classList.add('show');
+  $('#lbPrev').style.visibility = i > 0 ? 'visible' : 'hidden';
+  $('#lbNext').style.visibility = i < VIEW.length - 1 ? 'visible' : 'hidden';
+}
+
+function closeBox(){
+  $('#lightbox').classList.remove('show');
+  $('#lightboxImg').src = '';
+  lbIndex = -1;
+}
+
+function step(d){
+  if(lbIndex < 0) return;
+  openBox(lbIndex + d);
+}
+
+/* ---------- 事件 ---------- */
+$('#lightbox').onclick = (e) => { if(e.target.id === 'lightbox') closeBox(); };
+$('#lbPrev').onclick = (e) => { e.stopPropagation(); step(-1); };
+$('#lbNext').onclick = (e) => { e.stopPropagation(); step(1); };
+document.addEventListener('keydown', (e) => {
+  if(!$('#lightbox').classList.contains('show')) return;
+  if(e.key === 'Escape') closeBox();
+  if(e.key === 'ArrowLeft') step(-1);
+  if(e.key === 'ArrowRight') step(1);
+});
+
+$('#refresh').onclick = load;
+$('#more').onclick = renderMore;
+$('#export').onclick = () => window.open('/api/export?pwd=' + encodeURIComponent(PWD), '_blank');
+$('#logout').onclick = () => {
+  localStorage.removeItem('doodle_pwd');
+  PWD = '';
+  showLogin('');
+};
+
+let qTimer = null;
+$('#q').oninput = () => {
+  clearTimeout(qTimer);
+  qTimer = setTimeout(reset, 180);
+};
+
+/* ---------- 登录 ---------- */
+$('#enter').onclick = async () => {
+  PWD = $('#pwd').value.trim();
+  if(!PWD){ $('#loginErr').textContent = '请输入密码'; return; }
+  try{
+    const r = await api('/api/list');
+    if(r.ok){
+      localStorage.setItem('doodle_pwd', PWD);
+      $('#login').hidden = true;
+      $('#app').hidden = false;
+      load();
+    }else{
+      showLogin('密码不对');
+    }
+  }catch(e){}
+};
+$('#pwd').addEventListener('keydown', e => { if(e.key === 'Enter') $('#enter').click(); });
+
+if(PWD){
+  api('/api/list').then(r => {
+    if(r.ok){ $('#login').hidden = true; $('#app').hidden = false; load(); }
+  }).catch(() => showLogin(''));
+}else{
+  showLogin('');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 运行时产物（不提交）
+tmp/
+thumbs/
+*.zip
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store
