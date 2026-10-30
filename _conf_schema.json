@@ -34,11 +34,6 @@
     "description": "中文字体路径。留空会自动找系统字体；找不到会用英文签名。VPS 装字体：apt install -y fonts-wqy-zenhei",
     "default": ""
   },
-  "temp_dir": {
-    "type": "string",
-    "description": "临时文件目录（需 AstrBot 可写）",
-    "default": "data/plugins/astrbot_plugin_xiaoyu_doodle/tmp"
-  },
   "enabled_groups": {
     "type": "string",
     "description": "允许使用的群号，逗号分隔；留空=全部群",

@@ -23,7 +23,6 @@ import uuid
 import random
 import asyncio
 import datetime
-import logging
 
 from PIL import Image as PILImage, ImageDraw, ImageFont
 
@@ -62,7 +61,8 @@ except Exception:  # pragma: no cover
 
 PLUGIN_NAME = "xiaoyu_doodle"
 
-logger = logging.getLogger("xiaoyu_doodle")
+# 规范要求：日志器只能从 astrbot.api 导入，不要用 logging.getLogger
+from astrbot.api import logger  # noqa: E402
 
 INK = "#2b2b2b"
 PAPER = "#fffdf7"
@@ -133,7 +133,7 @@ ops 里每条指令的格式：
     "xiaoyu_doodle",
     "kana-kwi",
     "让鲸小鱼亲手画涂鸦：她自己给出每一笔的坐标，程序照她的笔迹画出来",
-    "2.1.0",
+    "2.1.1",
     "https://github.com/kana-kwi/astrbot_plugin_xiaoyu_doodle",
 )
 class XiaoYuDoodle(Star):
@@ -151,7 +151,6 @@ class XiaoYuDoodle(Star):
         self.show_date = bool(cfg.get("show_date", True))
         self.font_path = (cfg.get("font_path") or "").strip()
 
-        self.temp_dir = cfg.get("temp_dir", "data/plugins/astrbot_plugin_xiaoyu_doodle/tmp")
         self.enabled_groups = cfg.get("enabled_groups", "") or ""
         self.allow_private = bool(cfg.get("allow_private", True))
 
@@ -184,7 +183,7 @@ class XiaoYuDoodle(Star):
         self._gateway_runner = None
         self._gateway_starting = False
 
-        os.makedirs(self.temp_dir, exist_ok=True)
+        # 所有产物都放在 plugin_data 下的画册目录，插件目录只读不改
         os.makedirs(self.image_dir, exist_ok=True)
 
         if self.gateway_enabled:

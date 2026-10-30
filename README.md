@@ -145,7 +145,7 @@ docker restart astrbot
 - `127.0.0.1` **只在同一个容器内有效**。ImageCompanion 和本插件都在 AstrBot 容器里，所以没问题。
 - 如果调用方在容器外：`gateway_host` 改 `0.0.0.0`，`gateway_base_url` 填宿主机地址（如 `http://172.17.0.1:8765`）。
 - 生成比生图模型慢一点（3~8 秒），因为要先让 LLM 想坐标再画。
-- 图片存在 `temp_dir`，不会自动清理。
+- 图片存在画册目录 `data/plugin_data/astrbot_plugin_xiaoyu_doodle/images/`，不会自动清理。
 
 ## 配置
 
@@ -310,4 +310,4 @@ http://你的服务器IP:8766
 AstrBot 里没配默认对话模型，或者 `provider_id` 填错了。
 
 **图片在哪**
-`data/plugins/astrbot_plugin_xiaoyu_doodle/tmp/`，不会自动清理。
+`data/plugin_data/astrbot_plugin_xiaoyu_doodle/images/`，不会自动清理。插件目录本身不会写入任何文件。
