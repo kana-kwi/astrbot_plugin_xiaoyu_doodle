@@ -61,7 +61,7 @@ except Exception:  # pragma: no cover
 
 PLUGIN_NAME = "xiaoyu_doodle"
 
-# 规范要求：日志器只能从 astrbot.api 导入，不要用 logging.getLogger
+# 日志器统一从 astrbot.api 导入（规范要求，不使用 Python 内置日志器）
 from astrbot.api import logger  # noqa: E402
 
 INK = "#2b2b2b"
