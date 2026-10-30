@@ -4,6 +4,18 @@
 
 仓库：<https://github.com/kana-kwi/astrbot_plugin_xiaoyu_doodle>
 
+## 效果
+
+![一只在睡觉的鲸鱼](docs/example-whale.png)
+
+同一套渲染逻辑，换画幅也一样：
+
+| 竖幅 2:3 | 横幅 16:9 |
+|---|---|
+| ![下雨的窗户](docs/example-rain.png) | ![海边日落](docs/example-sunset.png) |
+
+这三张都是插件自己画出来的——**没有经过任何生图模型**，每一根线都是坐标算出来的，所以笔画歪、颜色也不均匀，这就是它该有的样子。
+
 ## 和「生图插件」的区别
 
 | | 生图插件 | 这个插件 |
